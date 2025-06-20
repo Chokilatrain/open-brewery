@@ -33,6 +33,31 @@ jobs:
       - name: Build with Next.js 🏗️
         run: npm run build
 
+      - name: Debug - List build output 📋
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
+          echo "Checking for out directory:"
+          if [ -d "./out" ]; then
+            echo "✅ out directory exists"
+            echo "out directory contents:"
+            ls -la ./out
+          else
+            echo "❌ out directory not found"
+            echo "Checking for other build directories:"
+            find . -maxdepth 2 -type d -name "*out*" -o -name "*build*" -o -name "*dist*" | head -10
+          fi
+
+      - name: Verify build output ✅
+        run: |
+          if [ ! -d "./out" ]; then
+            echo "❌ Build failed: out directory not found"
+            echo "This usually means the Next.js build failed or the output configuration is incorrect"
+            exit 1
+          fi
+          echo "✅ Build output verified"
+
       - name: Upload artifact 📡
         uses: actions/upload-pages-artifact@v3
         with:
