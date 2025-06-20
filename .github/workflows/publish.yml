@@ -30,8 +30,24 @@ jobs:
         with:
           static_site_generator: next
 
+      - name: Check Next.js configuration 🔍
+        run: |
+          echo "Next.js version:"
+          npx next --version
+          echo "Next.js config:"
+          cat next.config.js
+          echo "Package.json scripts:"
+          cat package.json | grep -A 10 '"scripts"'
+
       - name: Build with Next.js 🏗️
-        run: npm run build
+        run: |
+          echo "Building with Next.js static export..."
+          npm run build
+          echo "Build completed. Checking for output directories..."
+          ls -la
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
 
       - name: Debug - List build output 📋
         run: |
