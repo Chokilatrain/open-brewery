@@ -39,15 +39,14 @@ export const testApiConnection = async (): Promise<boolean> => {
  * @returns Promise resolving to an array of suggestions
  */
 export const fetchAutocompleteSuggestions = async (query: string): Promise<BreweryAutocompleteSuggestion[]> => {
-  // First test if the API is accessible
-  const isApiAccessible = await testApiConnection();
-  if (!isApiAccessible) {
-    console.error('API is not accessible');
+  // API requires at least 3 characters
+  if (!query || query.trim().length < 3) {
+    console.log('Query too short, skipping API call:', query);
     return [];
   }
 
   // Try the search endpoint instead of autocomplete, which might be more stable
-  const url = `https://api.openbrewerydb.org/v1/breweries/search?query=${encodeURIComponent(query)}&per_page=10`;
+  const url = `https://api.openbrewerydb.org/v1/breweries/search?query=${encodeURIComponent(query.trim())}&per_page=10`;
   
   try {
     console.log('Fetching from URL:', url);

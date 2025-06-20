@@ -9,12 +9,22 @@ export const HomePage = ({ Header = null, Footer = null }: { Header?: React.Reac
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<BreweryAutocompleteSuggestion[]>([]);
   const [apiStatus, setApiStatus] = useState<string>("Testing...");
+  const [searchStatus, setSearchStatus] = useState<string>("");
   /*const suggestions = useMemo(() => {
     return search.length % 2 === 0 ? ["Even"] : ["Odd"];
   }, [search]); */
 
   const handleSetSearch = (value: string) => {
     setSearch(value);
+    
+    // Update search status based on input length
+    if (!value || value.trim().length === 0) {
+      setSearchStatus("");
+    } else if (value.trim().length < 3) {
+      setSearchStatus(`Type ${3 - value.trim().length} more character${3 - value.trim().length === 1 ? '' : 's'} to search`);
+    } else {
+      setSearchStatus("");
+    }
   };
 
   // Test API connection on component mount
@@ -25,7 +35,7 @@ export const HomePage = ({ Header = null, Footer = null }: { Header?: React.Reac
   }, []);
 
   useEffect(() => {
-    if (!!search && search.length > 0) {
+    if (!!search && search.trim().length >= 3) {
       fetchAutocompleteSuggestionsDebounced(search, setSuggestions);
     } else {
       setSuggestions([]);
@@ -36,7 +46,10 @@ export const HomePage = ({ Header = null, Footer = null }: { Header?: React.Reac
         <div className="flex flex-col gap-4">
           {Header}  
           <div className="text-sm text-gray-600">{apiStatus}</div>
-          <TextInput placeholder="Search" value={search} onChange={handleSetSearch} suggestions={suggestions.map((suggestion) => suggestion.name)} />
+          <TextInput placeholder="Search breweries (min 3 characters)" value={search} onChange={handleSetSearch} suggestions={suggestions.map((suggestion) => suggestion.name)} />
+          {searchStatus && (
+            <div className="text-sm text-blue-600">{searchStatus}</div>
+          )}
           <FlyoutMenu buttonLabel="Filter" menuItems={[{ label: "Filter 1", onClick: () => {} }, { label: "Filter 2", onClick: () => {} }]} />  
           {/* TODO: Add filter options here */}
           {/* TODO: Add sort options here */}
