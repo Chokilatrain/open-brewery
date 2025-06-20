@@ -45,8 +45,8 @@ export const fetchAutocompleteSuggestions = async (query: string): Promise<Brewe
     return [];
   }
 
-  // Try the search endpoint instead of autocomplete, which might be more stable
-  const url = `https://api.openbrewerydb.org/v1/breweries/search?query=${encodeURIComponent(query.trim())}&per_page=10`;
+  // Use the autocomplete endpoint which is specifically designed for search suggestions
+  const url = `https://api.openbrewerydb.org/v1/breweries/autocomplete?query=${encodeURIComponent(query.trim())}`;
   
   try {
     console.log('Fetching from URL:', url);
