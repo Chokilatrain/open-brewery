@@ -20,6 +20,19 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Mock API for Development
+
+This project includes a mock API system for local development. To use mock data instead of real API calls:
+
+1. Create a `.env.local` file in the root directory
+2. Add the following line to enable mock API:
+   ```
+   NEXT_PUBLIC_USE_MOCK_API=true
+   ```
+3. Remove the line or set it to `false` to use the real Open Brewery DB API
+
+The mock API includes realistic brewery data and simulates network delays for a more authentic development experience.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
