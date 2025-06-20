@@ -190,14 +190,15 @@ console.log('Environment check:', {
 const mockFetchAutocompleteSuggestions = async (query: string): Promise<BreweryResult[]> => {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 300));
-  
+  if (query.trim().toLowerCase() === "test") {
+    return MOCK_BREWERIES;
+  }
   // Filter breweries based on query
   const filteredBreweries = MOCK_BREWERIES.filter(brewery =>
     brewery.name.toLowerCase().includes(query.toLowerCase()) ||
     brewery.city.toLowerCase().includes(query.toLowerCase()) ||
     brewery.state.toLowerCase().includes(query.toLowerCase())
   );
-  
   console.log('Mock API Response:', filteredBreweries);
   return filteredBreweries;
 };
@@ -304,13 +305,61 @@ export const fetchAutocompleteSuggestionsDebounced = (query: string, setSuggesti
   }, 300)();
 }
 
+// New: mockFetchSearchResults for full search simulation
+export const mockFetchSearchResults = async (
+  query: string,
+  page: number = 1,
+  by_name?: string,
+  by_city?: string,
+  sort?: string,
+  per_page?: number
+): Promise<BreweryResult[]> => {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  let breweries = MOCK_BREWERIES;
+  if (query && query.trim().length >= 3 && query.trim().toLowerCase() !== 'test') {
+    breweries = breweries.filter(brewery =>
+      brewery.name.toLowerCase().includes(query.toLowerCase()) ||
+      brewery.city.toLowerCase().includes(query.toLowerCase()) ||
+      brewery.state.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+  if (by_name) {
+    breweries = breweries.filter(b => b.name.toLowerCase().includes(by_name.toLowerCase()));
+  }
+  if (by_city) {
+    breweries = breweries.filter(b => b.city.toLowerCase().includes(by_city.toLowerCase()));
+  }
+  if (sort) {
+    const [field, direction] = sort.split(":");
+    breweries = breweries.slice().sort((a, b) => {
+      const aVal = (a as any)[field] || "";
+      const bVal = (b as any)[field] || "";
+      if (aVal < bVal) return direction === "desc" ? 1 : -1;
+      if (aVal > bVal) return direction === "desc" ? -1 : 1;
+      return 0;
+    });
+  }
+  if (per_page) {
+    const start = (page - 1) * per_page;
+    breweries = breweries.slice(start, start + per_page);
+  }
+  return breweries;
+};
+
 /**
  * Fetch search results for breweries based on a query string and page.
  * @param query The search query string
  * @param page The page number (1-based)
  * @returns Promise resolving to an array of BreweryResult
  */
-export const fetchSearchResults = async (query: string, page: number = 1): Promise<BreweryResult[]> => {
+export const fetchSearchResults = async (
+  query: string,
+  page: number = 1,
+  by_name?: string,
+  by_city?: string,
+  sort?: string,
+  per_page?: number
+): Promise<BreweryResult[]> => {
   // API requires at least 3 characters
   if (!query || query.trim().length < 3) {
     console.log('Query too short, skipping API call:', query);
@@ -319,12 +368,21 @@ export const fetchSearchResults = async (query: string, page: number = 1): Promi
 
   // Use mock data in development if enabled
   if (useMockData) {
-    console.log('Using mock API for search:', query, 'page:', page);
-    return mockFetchAutocompleteSuggestions(query.trim()); // You may want a different mock for search
+    console.log('Using mock API for search:', query, 'page:', page, 'by_name:', by_name, 'by_city:', by_city, 'sort:', sort, 'per_page:', per_page);
+    return mockFetchSearchResults(query, page, by_name, by_city, sort, per_page);
   }
 
-  // Use the search endpoint with pagination
-  const url = `https://api.openbrewerydb.org/v1/breweries/search?query=${encodeURIComponent(query.trim())}&page=${page}`;
+  // Build query params
+  const params = new URLSearchParams();
+  params.append('query', query.trim());
+  params.append('page', String(page));
+  if (by_name) params.append('by_name', by_name);
+  if (by_city) params.append('by_city', by_city);
+  if (sort) params.append('sort', sort);
+  if (per_page) params.append('per_page', String(per_page));
+
+  // Use the search endpoint with pagination and filters
+  const url = `https://api.openbrewerydb.org/v1/breweries/search?${params.toString()}`;
   try {
     console.log('Fetching search results from URL:', url);
     const response = await fetch(url, {

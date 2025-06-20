@@ -39,20 +39,20 @@ export default function BreweryDetailsPage() {
     return null;
   }
 
-  const googleMapsUrl = brewery.latitude && brewery.longitude
+  const googleMapsUrl: string | undefined = brewery.latitude && brewery.longitude
     ? `https://www.google.com/maps?q=${brewery.latitude},${brewery.longitude}`
-    : null;
+    : undefined;
 
-  const embedUrl = brewery.latitude && brewery.longitude && GOOGLE_MAPS_API_KEY
+  const embedUrl: string | undefined = brewery.latitude && brewery.longitude && GOOGLE_MAPS_API_KEY
     ? `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${brewery.latitude},${brewery.longitude}`
-    : null;
+    : undefined;
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-gray-900 text-white rounded shadow border border-gray-700">
+    <div className="w-full max-w-screen-lg mx-auto mt-10 p-4 sm:p-6 md:p-8 bg-gray-900 text-white rounded shadow border border-gray-700">
       <h1 className="text-3xl font-bold mb-4">{brewery.name}</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
         {/* Left column: General info */}
-        <div>
+        <div className="min-w-0">
           <div className="mb-3">
             <span className="font-semibold">Brewery URL:</span>{" "}
             {brewery.website_url ? (
@@ -66,7 +66,7 @@ export default function BreweryDetailsPage() {
           </div>
         </div>
         {/* Right column: Location info */}
-        <div>
+        <div className="min-w-0">
           <div className="mb-3">
             <span className="font-semibold">Street:</span> {brewery.street || "N/A"}
           </div>
@@ -85,15 +85,15 @@ export default function BreweryDetailsPage() {
         </div>
       </div>
       {/* Google Map */}
-      {typeof embedUrl === 'string' && (
-        <div className="mt-8">
+      {embedUrl && (
+        <div className="mt-8 w-full">
           <span className="font-semibold">Location Map:</span>
-          <div className="mt-2">
+          <div className="mt-2 w-full">
             <iframe
               title="Google Map"
               width="100%"
               height="300"
-              style={{ border: 0 }}
+              style={{ border: 0, width: '100%' }}
               loading="lazy"
               allowFullScreen
               src={embedUrl}

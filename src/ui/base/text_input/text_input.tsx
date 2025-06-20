@@ -63,15 +63,15 @@ export const TextInput = ({
       onEnter();
     }
   };
-
-  const menuItems = suggestions.map((suggestion) => ({ label: suggestion.name, onClick: () => handleSuggestionClick(suggestion) }));
+  console.log("suggestions NOE", suggestions);
+  const menuItems = suggestions.map((suggestion) => ({ label: suggestion.name, onClick: () => {  console.log("suggestion", suggestion); handleSuggestionClick(suggestion) } }));
 
   return (
     <div ref={wrapperRef} style={{ position: "relative", width: "100%" }}>
       <input
         ref={inputRef}
         type="text"
-        className="border-2 border-gray-300 rounded-md p-2 w-full"
+        className="bg-gray-900 text-white border-2 border-gray-700 rounded-t-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
         placeholder={placeholder}
         value={value}
         onChange={(e) => handleInputChange(e.target.value)}
