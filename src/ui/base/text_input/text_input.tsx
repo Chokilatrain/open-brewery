@@ -2,16 +2,25 @@ import React, { useState, useRef, useEffect } from "react";
 import { Menu } from "@/ui/base/menu/menu";
 import { MenuItem } from "@/ui/base/menu/menu_item";
 
+export interface SuggestionItem {
+  id: string;
+  name: string;
+}
+
 export const TextInput = ({
   placeholder = "Search",
   value = "",
   onChange = () => {},
   suggestions = [],
+  onEnter,
+  onSuggestionClick,
 }: {
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
-  suggestions?: string[];
+  suggestions?: SuggestionItem[];
+  onEnter?: () => void;
+  onSuggestionClick?: (suggestion: SuggestionItem) => void;
 }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,15 +46,25 @@ export const TextInput = ({
     setShowSuggestions(true);
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    onChange(suggestion);
+  const handleSuggestionClick = (suggestion: SuggestionItem) => {
+    if (onSuggestionClick) {
+      onSuggestionClick(suggestion);
+    } else {
+      onChange(suggestion.name);
+    }
     setShowSuggestions(false);
     if (inputRef.current) {
       inputRef.current.blur();
     }
   };
 
-  const menuItems = suggestions.map((suggestion) => ({ label: suggestion, onClick: () => handleSuggestionClick(suggestion) }));
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && onEnter) {
+      onEnter();
+    }
+  };
+
+  const menuItems = suggestions.map((suggestion) => ({ label: suggestion.name, onClick: () => handleSuggestionClick(suggestion) }));
 
   return (
     <div ref={wrapperRef} style={{ position: "relative", width: "100%" }}>
@@ -58,6 +77,7 @@ export const TextInput = ({
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
         autoComplete="off"
+        onKeyDown={handleKeyDown}
       />
       {showSuggestions && suggestions.length > 0 && (
         <Menu 
@@ -65,6 +85,7 @@ export const TextInput = ({
           renderItem={
             (item) => <MenuItem label={item.label} onClick={item.onClick} icon={item.icon} key={item.label} />
           }
+          className="bg-gray-800 text-white border border-gray-700"
         />
       )}
     </div>
