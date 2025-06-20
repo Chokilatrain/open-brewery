@@ -1,18 +1,12 @@
 import React, { useState } from "react";
 
-interface SortPanelProps {
-  sort: string;
-  onSortChange: (sort: string) => void;
-  className?: string;
-}
-
 const SORT_FIELDS = [
   { value: "name", label: "Name" },
   { value: "type", label: "Type" },
   { value: "city", label: "City" },
 ];
 
-const SortPanel: React.FC<SortPanelProps> = ({ sort, onSortChange, className = "" }) => {
+const SortPanel = ({ onSortChange }: { sort: string; onSortChange: (sort: string) => void }) => {
   const [field, setField] = useState("name");
   const [direction, setDirection] = useState("asc");
 
@@ -22,7 +16,7 @@ const SortPanel: React.FC<SortPanelProps> = ({ sort, onSortChange, className = "
   };
 
   return (
-    <div className={`flex flex-row items-center gap-2 mb-4 ${className}`}>
+    <div className={`flex flex-row items-center gap-2 mb-4`}>
       <label className="font-semibold">Sort by:</label>
       <select
         value={field}

@@ -331,9 +331,10 @@ export const mockFetchSearchResults = async (
   }
   if (sort) {
     const [field, direction] = sort.split(":");
-    breweries = breweries.slice().sort((a, b) => {
-      const aVal = (a as any)[field] || "";
-      const bVal = (b as any)[field] || "";
+    breweries = breweries.slice().sort((a: BreweryResult, b: BreweryResult) => {
+      const key = field as keyof BreweryResult;
+      const aVal = a[key] ?? "";
+      const bVal = b[key] ?? "";
       if (aVal < bVal) return direction === "desc" ? 1 : -1;
       if (aVal > bVal) return direction === "desc" ? -1 : 1;
       return 0;
