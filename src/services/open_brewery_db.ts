@@ -19,6 +19,19 @@ export type BreweryAutocompleteSuggestion = {
   street: string | null;
 };
 
+/**
+ * Test function to check if the API is accessible
+ */
+export const testApiConnection = async (): Promise<boolean> => {
+  try {
+    const response = await fetch('https://api.openbrewerydb.org/v1/breweries?per_page=1');
+    console.log('API test response:', response.status, response.statusText);
+    return response.ok;
+  } catch (error) {
+    console.error('API test failed:', error);
+    return false;
+  }
+};
 
 /**
  * Fetch autocomplete suggestions for breweries based on a query string.
@@ -26,16 +39,44 @@ export type BreweryAutocompleteSuggestion = {
  * @returns Promise resolving to an array of suggestions
  */
 export const fetchAutocompleteSuggestions = async (query: string): Promise<BreweryAutocompleteSuggestion[]> => {
-  // Use the external Open Brewery DB API directly for static export compatibility
-  const url = `https://api.openbrewerydb.org/v1/breweries/autocomplete?query=${encodeURIComponent(query)}`;
+  // First test if the API is accessible
+  const isApiAccessible = await testApiConnection();
+  if (!isApiAccessible) {
+    console.error('API is not accessible');
+    return [];
+  }
+
+  // Try the search endpoint instead of autocomplete, which might be more stable
+  const url = `https://api.openbrewerydb.org/v1/breweries/search?query=${encodeURIComponent(query)}&per_page=10`;
   
   try {
-    const response = await fetch(url);
+    console.log('Fetching from URL:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+      // Allow redirects
+      redirect: 'follow',
+    });
+    
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch autocomplete suggestions: ${response.statusText}`);
+      console.error('Response not ok:', response.status, response.statusText);
+      throw new Error(`Failed to fetch brewery suggestions: ${response.status} ${response.statusText}`);
     }
+    
     const data = await response.json();
-    console.log('API Response:', data);
+    console.log('API Response data:', data);
+    
+    if (!Array.isArray(data)) {
+      console.error('Unexpected response format:', data);
+      return [];
+    }
+    
     return data.map((item: BreweryAutocompleteSuggestion) => {
       return {
         id: item.id,
@@ -57,7 +98,7 @@ export const fetchAutocompleteSuggestions = async (query: string): Promise<Brewe
       };
     });
   } catch (error) {
-    console.error('Error fetching autocomplete suggestions:', error);
+    console.error('API call failed:', error);
     return [];
   }
 };

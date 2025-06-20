@@ -1,6 +1,6 @@
 "use client";
 
-import { BreweryAutocompleteSuggestion, fetchAutocompleteSuggestionsDebounced } from "@/services/open_brewery_db";
+import { BreweryAutocompleteSuggestion, fetchAutocompleteSuggestionsDebounced, testApiConnection } from "@/services/open_brewery_db";
 import { FlyoutMenu } from "@/ui/base/flyout_menu/flyout_menu";
 import { TextInput } from "@/ui/base/text_input/text_input";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 export const HomePage = ({ Header = null, Footer = null }: { Header?: React.ReactNode, Footer?: React.ReactNode }) => {
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<BreweryAutocompleteSuggestion[]>([]);
+  const [apiStatus, setApiStatus] = useState<string>("Testing...");
   /*const suggestions = useMemo(() => {
     return search.length % 2 === 0 ? ["Even"] : ["Odd"];
   }, [search]); */
@@ -16,6 +17,12 @@ export const HomePage = ({ Header = null, Footer = null }: { Header?: React.Reac
     setSearch(value);
   };
 
+  // Test API connection on component mount
+  useEffect(() => {
+    testApiConnection().then((isAccessible) => {
+      setApiStatus(isAccessible ? "✅ API Connected" : "❌ API Not Accessible");
+    });
+  }, []);
 
   useEffect(() => {
     if (!!search && search.length > 0) {
@@ -28,6 +35,7 @@ export const HomePage = ({ Header = null, Footer = null }: { Header?: React.Reac
   return (
         <div className="flex flex-col gap-4">
           {Header}  
+          <div className="text-sm text-gray-600">{apiStatus}</div>
           <TextInput placeholder="Search" value={search} onChange={handleSetSearch} suggestions={suggestions.map((suggestion) => suggestion.name)} />
           <FlyoutMenu buttonLabel="Filter" menuItems={[{ label: "Filter 1", onClick: () => {} }, { label: "Filter 2", onClick: () => {} }]} />  
           {/* TODO: Add filter options here */}
