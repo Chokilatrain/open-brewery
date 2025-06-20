@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { fetchBreweryDetails } from "@/services/open_brewery_db";
 import type { BreweryResult } from "@/services/open_brewery_db";
@@ -7,6 +7,14 @@ import type { BreweryResult } from "@/services/open_brewery_db";
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function BreweryDetailsPage() {
+  return (
+    <Suspense fallback={<div className="max-w-2xl mx-auto mt-10 p-6 bg-gray-900 text-white rounded shadow border border-gray-700">Loading brewery details...</div>}>
+      <BreweryDetailsPageInner />
+    </Suspense>
+  );
+}
+
+function BreweryDetailsPageInner() {
   const searchParams = useSearchParams();
   const breweryId = searchParams.get("id");
   const [brewery, setBrewery] = useState<BreweryResult | null>(null);
