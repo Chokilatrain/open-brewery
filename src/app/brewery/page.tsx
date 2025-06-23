@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { fetchBreweryDetails } from "@/services/open_brewery_db";
 import type { BreweryResult } from "@/services/open_brewery_db";
 import { BreweryDetails } from "@/ui/pages/details/details";
+import { Header } from "@/ui/base/header/header";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -42,13 +43,16 @@ function BreweryDetailsPageInner() {
     : undefined;
 
   return (
-    <BreweryDetails
-      brewery={brewery}
-      loading={loading}
-      error={error}
-      breweryId={breweryId}
-      googleMapsUrl={googleMapsUrl}
-      embedUrl={embedUrl}
-    />
+    <>
+      <Header title="Brewery Details" showBackButton={true} />
+      <BreweryDetails
+        brewery={brewery}
+        loading={loading}
+        error={error}
+        breweryId={breweryId}
+        googleMapsUrl={googleMapsUrl}
+        embedUrl={embedUrl}
+      />
+    </>
   );
 } 
