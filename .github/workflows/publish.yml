@@ -2,7 +2,7 @@
 name: publish-to-github-pages
 
 env:
-  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
 
 on:
   push:
@@ -47,10 +47,19 @@ jobs:
           else
             echo "❌ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is not set"
           fi
+          echo ""
+          echo "Debugging variable access:"
+          echo "Direct vars access test:"
+          echo "Vars access result: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}"
+          echo "Vars access length: ${#NEXT_PUBLIC_GOOGLE_MAPS_API_KEY_VAR}"
+          echo ""
+          echo "All environment variables:"
+          env | grep -i google || echo "No Google-related environment variables found"
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
-          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY_VAR: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
 
       - name: Check Next.js configuration 🔍
         run: |
@@ -66,13 +75,19 @@ jobs:
           echo "Building with Next.js static export..."
           echo "Environment check before build:"
           echo "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY length: ${#NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}"
+          # Temporary: Set API key if not available from secrets
+          if [ -z "$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY" ]; then
+            echo "⚠️ Using temporary API key - REPLACE WITH YOUR ACTUAL KEY"
+            export NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="YOUR_API_KEY_HERE"
+          fi
+          echo "Final API key length: ${#NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}"
           npm run build
           echo "Build completed. Checking for output directories..."
           ls -la
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
-          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
 
       - name: Debug - List build output 📋
         run: |
