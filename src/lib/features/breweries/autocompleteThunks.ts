@@ -22,8 +22,8 @@ export const fetchAutocompleteSuggestionsThunk = createAsyncThunk(
       return state.breweryAutocomplete.suggestions[search];
     }
     const suggestions = await fetchAutocompleteSuggestions(search);
-    // Only store suggestions, not in the main search results state
-    dispatch(setSuggestions({ search, suggestions: suggestions.map(s => s.name) }));
+    // Store full {id, name} objects
+    dispatch(setSuggestions({ search, suggestions: suggestions.map(s => ({ id: s.id, name: s.name })) }));
     return suggestions;
   }
 ); 

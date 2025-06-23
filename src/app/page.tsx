@@ -3,14 +3,14 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { updateSearchTerm, fetchAutocompleteSuggestionsThunk } from "@/lib/features/breweries/autocompleteThunks";
-import { fetchSearchResultsThunk, selectResultEntitiesBySearchKeyFromRoot, selectSearchTotalFromRoot, selectSuggestionsWithIdsFromRoot } from "@/lib/features/breweries/searchResultsThunks";
+import { fetchSearchResultsThunk, selectResultEntitiesBySearchKeyFromRoot, selectSearchTotalFromRoot } from "@/lib/features/breweries/searchResultsThunks";
 import { selectSearch } from "@/lib/features/breweries/brewerySearchSlice";
 import { selectSuggestions } from "@/lib/features/breweries/breweryAutocompleteSlice";
 import type { BreweryResult } from "@/services/open_brewery_db";
 import { useRouter } from "next/navigation";
 import { HomePage } from "@/ui/pages/home/home";
 import { Header } from "@/ui/base/header/header";
-import type { SuggestionItem } from "@/ui/base/text_input/text_input";
+import type { SuggestionItem } from "@/lib/features/breweries/breweryAutocompleteSlice";
 
 const MIN_SEARCH_CHARACTERS = 3;
 
@@ -31,10 +31,7 @@ export default function HomeContainer() {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   // Get suggestions for the current search term as objects with id and name
-  const suggestions: SuggestionItem[] = useAppSelector(state => {
-    const suggestionNames = suggestionsMap[search]?.length ? suggestionsMap[search] : [];
-    return selectSuggestionsWithIdsFromRoot(state, suggestionNames);
-  });
+  const suggestions: SuggestionItem[] = suggestionsMap[search] || [];
 
   // Get results for the current search term, page, filters, sort, and per_page
   const results: BreweryResult[] = useAppSelector(state =>

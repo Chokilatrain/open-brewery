@@ -1,8 +1,13 @@
 import { createAppSlice } from "@/lib/createAppSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export interface SuggestionItem {
+  id: string;
+  name: string;
+}
+
 export interface BreweryAutocompleteState {
-  suggestions: { [key: string]: string[] };
+  suggestions: { [key: string]: SuggestionItem[] };
 }
 
 const initialState: BreweryAutocompleteState = {
@@ -16,7 +21,7 @@ export const breweryAutocompleteSlice = createAppSlice({
     setSuggestions: create.reducer(
       (
         state: BreweryAutocompleteState,
-        action: PayloadAction<{ search: string; suggestions: string[] }>
+        action: PayloadAction<{ search: string; suggestions: SuggestionItem[] }>
       ) => ({
         ...state,
         suggestions: {
