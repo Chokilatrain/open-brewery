@@ -6,7 +6,24 @@ import type { BreweryResult } from "@/services/open_brewery_db";
 import { BreweryDetails } from "@/ui/pages/details/details";
 import { Header } from "@/ui/base/header/header";
 
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+// Extend Window interface for our custom property
+declare global {
+  interface Window {
+    __NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?: string;
+  }
+}
+
+// Try multiple ways to get the API key
+const GOOGLE_MAPS_API_KEY = 
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 
+  (typeof window !== 'undefined' ? window.__NEXT_PUBLIC_GOOGLE_MAPS_API_KEY : undefined);
+
+// Debug logging (remove in production)
+if (typeof window !== 'undefined') {
+  console.log('Google Maps API Key available:', !!GOOGLE_MAPS_API_KEY);
+  console.log('Google Maps API Key length:', GOOGLE_MAPS_API_KEY?.length || 0);
+  console.log('Window API key available:', !!window.__NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+}
 
 export default function BreweryDetailsContainer() {
   return (
@@ -41,6 +58,15 @@ function BreweryDetailsPageInner() {
   const embedUrl: string | undefined = brewery?.latitude && brewery?.longitude && GOOGLE_MAPS_API_KEY
     ? `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${brewery.latitude},${brewery.longitude}`
     : undefined;
+
+  // Debug logging for embed URL
+  useEffect(() => {
+    if (brewery?.latitude && brewery?.longitude) {
+      console.log('Brewery has coordinates:', brewery.latitude, brewery.longitude);
+      console.log('Google Maps API Key available for embed:', !!GOOGLE_MAPS_API_KEY);
+      console.log('Embed URL will be generated:', !!embedUrl);
+    }
+  }, [brewery, embedUrl]);
 
   return (
     <>

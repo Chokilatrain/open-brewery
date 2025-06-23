@@ -30,6 +30,24 @@ jobs:
         with:
           static_site_generator: next
 
+      - name: Debug Environment Variables 🔍
+        run: |
+          echo "Checking environment variables:"
+          echo "NODE_ENV: $NODE_ENV"
+          echo "NEXT_TELEMETRY_DISABLED: $NEXT_TELEMETRY_DISABLED"
+          echo "Checking if Google Maps API key is set:"
+          if [ -n "$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY" ]; then
+            echo "✅ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is set"
+            echo "Length: ${#NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}"
+            echo "First 10 chars: ${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:0:10}..."
+          else
+            echo "❌ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is not set"
+          fi
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+
       - name: Check Next.js configuration 🔍
         run: |
           echo "Next.js version:"
@@ -42,12 +60,15 @@ jobs:
       - name: Build with Next.js 🏗️
         run: |
           echo "Building with Next.js static export..."
+          echo "Environment check before build:"
+          echo "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY length: ${#NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}"
           npm run build
           echo "Build completed. Checking for output directories..."
           ls -la
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
 
       - name: Debug - List build output 📋
         run: |
@@ -59,6 +80,14 @@ jobs:
             echo "✅ out directory exists"
             echo "out directory contents:"
             ls -la ./out
+            echo "Checking for brewery page in build output:"
+            if [ -f "./out/brewery/index.html" ]; then
+              echo "✅ brewery page exists"
+              echo "Checking if API key is embedded in the HTML:"
+              grep -o "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY" ./out/brewery/index.html || echo "No API key reference found in HTML"
+            else
+              echo "❌ brewery page not found"
+            fi
           else
             echo "❌ out directory not found"
             echo "Checking for other build directories:"
@@ -91,5 +120,3 @@ jobs:
       - name: Publish to GitHub Pages 🚀
         id: deployment
         uses: actions/deploy-pages@v4
-        env:
-          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
