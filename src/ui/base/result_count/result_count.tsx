@@ -1,4 +1,5 @@
 import React from "react";
+import styles from './result_count.module.css';
 
 interface ResultCountProps {
   total: number;
@@ -10,7 +11,7 @@ interface ResultCountProps {
 const ResultCount: React.FC<ResultCountProps> = ({ total, page, perPage, className = "" }) => {
   const totalPages = Math.ceil(total / perPage);
   return (
-    <div className={`w-full flex justify-center items-center py-2 text-sm text-gray-700 ${className}`}>
+    <div className={`${styles.container} ${className}`}>
       Showing page {page} of {totalPages} ({total} results)
     </div>
   );

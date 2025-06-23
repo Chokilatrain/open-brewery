@@ -176,14 +176,6 @@ const useMockData = isDevelopment && (
   process.env.NEXT_PUBLIC_USE_MOCK_API === undefined // Default to mock in development
 );
 
-// Debug logging
-console.log('Environment check:', {
-  NODE_ENV: process.env.NODE_ENV,
-  NEXT_PUBLIC_USE_MOCK_API: process.env.NEXT_PUBLIC_USE_MOCK_API,
-  isDevelopment,
-  useMockData
-});
-
 /**
  * Mock API function for local development
  */
@@ -199,7 +191,6 @@ const mockFetchAutocompleteSuggestions = async (query: string): Promise<BreweryR
     brewery.city.toLowerCase().includes(query.toLowerCase()) ||
     brewery.state.toLowerCase().includes(query.toLowerCase())
   );
-  console.log('Mock API Response:', filteredBreweries);
   return filteredBreweries;
 };
 
@@ -208,13 +199,11 @@ const mockFetchAutocompleteSuggestions = async (query: string): Promise<BreweryR
  */
 export const testApiConnection = async (): Promise<boolean> => {
   if (useMockData) {
-    console.log('Using mock API - connection test passed');
     return true;
   }
 
   try {
     const response = await fetch('https://api.openbrewerydb.org/v1/breweries?per_page=1');
-    console.log('API test response:', response.status, response.statusText);
     return response.ok;
   } catch (error) {
     console.error('API test failed:', error);
@@ -230,13 +219,11 @@ export const testApiConnection = async (): Promise<boolean> => {
 export const fetchAutocompleteSuggestions = async (query: string): Promise<BreweryResult[]> => {
   // API requires at least 3 characters
   if (!query || query.trim().length < 3) {
-    console.log('Query too short, skipping API call:', query);
     return [];
   }
 
   // Use mock data in development if enabled
   if (useMockData) {
-    console.log('Using mock API for query:', query);
     return mockFetchAutocompleteSuggestions(query.trim());
   }
 
@@ -244,8 +231,6 @@ export const fetchAutocompleteSuggestions = async (query: string): Promise<Brewe
   const url = `https://api.openbrewerydb.org/v1/breweries/autocomplete?query=${encodeURIComponent(query.trim())}`;
   
   try {
-    console.log('Fetching from URL:', url);
-    
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -255,16 +240,12 @@ export const fetchAutocompleteSuggestions = async (query: string): Promise<Brewe
       redirect: 'follow',
     });
     
-    console.log('Response status:', response.status);
-    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-    
     if (!response.ok) {
       console.error('Response not ok:', response.status, response.statusText);
       throw new Error(`Failed to fetch brewery suggestions: ${response.status} ${response.statusText}`);
     }
     
     const data = await response.json();
-    console.log('API Response data:', data);
     
     if (!Array.isArray(data)) {
       console.error('Unexpected response format:', data);
@@ -312,8 +293,8 @@ export const mockFetchSearchResults = async (
   by_name?: string,
   by_city?: string,
   sort?: string,
-  per_page?: number
-): Promise<BreweryResult[]> => {
+  per_page: number = 3
+): Promise<{ results: BreweryResult[]; total: number }> => {
   await new Promise(resolve => setTimeout(resolve, 300));
   let breweries = MOCK_BREWERIES;
   if (query && query.trim().length >= 3 && query.trim().toLowerCase() !== 'test') {
@@ -340,11 +321,12 @@ export const mockFetchSearchResults = async (
       return 0;
     });
   }
-  if (per_page) {
-    const start = (page - 1) * per_page;
-    breweries = breweries.slice(start, start + per_page);
-  }
-  return breweries;
+  
+  const total = breweries.length;
+  // Always apply per_page pagination
+  const start = (page - 1) * per_page;
+  const results = breweries.slice(start, start + per_page);
+  return { results, total };
 };
 
 /**
@@ -363,14 +345,13 @@ export const fetchSearchResults = async (
 ): Promise<BreweryResult[]> => {
   // API requires at least 3 characters
   if (!query || query.trim().length < 3) {
-    console.log('Query too short, skipping API call:', query);
     return [];
   }
 
   // Use mock data in development if enabled
   if (useMockData) {
-    console.log('Using mock API for search:', query, 'page:', page, 'by_name:', by_name, 'by_city:', by_city, 'sort:', sort, 'per_page:', per_page);
-    return mockFetchSearchResults(query, page, by_name, by_city, sort, per_page);
+    const mockResult = await mockFetchSearchResults(query, page, by_name, by_city, sort, per_page);
+    return mockResult.results;
   }
 
   // Build query params
@@ -385,7 +366,6 @@ export const fetchSearchResults = async (
   // Use the search endpoint with pagination and filters
   const url = `https://api.openbrewerydb.org/v1/breweries/search?${params.toString()}`;
   try {
-    console.log('Fetching search results from URL:', url);
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -393,7 +373,6 @@ export const fetchSearchResults = async (
       },
       redirect: 'follow',
     });
-    console.log('Response status:', response.status);
     if (!response.ok) {
       console.error('Response not ok:', response.status, response.statusText);
       throw new Error(`Failed to fetch brewery search results: ${response.status} ${response.statusText}`);

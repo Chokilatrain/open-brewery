@@ -1,4 +1,5 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
+import styles from './filter_drawer.module.css';
 
 interface FilterDrawerProps {
   isOpen: boolean;
@@ -63,24 +64,21 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onOpen, onClose, ch
   }, [showContent, drawerContent]);
 
   return (
-    <div className={`relative w-full ${className}`}> {/* relative for absolute positioning */}
+    <div className={`${styles.container} ${className}`}>
       {/* Main content (e.g., search input) */}
-      <div className="flex flex-col items-center w-full">
-        <div className="w-full max-w-screen-lg">{children}</div>
+      <div className={styles.contentWrapper}>
+        <div className={styles.maxWidthContainer}>{children}</div>
         {/* Drawer handle attached to bottom of children, same width as input */}
         <button
           onClick={handleToggle}
-          className={`bg-gray-800 text-white rounded-b-lg shadow hover:bg-gray-700 transition-all duration-300 z-20 relative w-full max-w-screen-lg
-            ${isOpen ? 'opacity-0 pointer-events-none h-0 min-h-0 py-0 m-0 overflow-hidden border-0 border-none !border-0' : 'opacity-100 pointer-events-auto py-1 min-h-[2.5rem] border-t-2 border-gray-700'}
-          `}
-          style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, borderTopWidth: isOpen ? 0 : undefined, borderWidth: isOpen ? 0 : undefined }}
+          className={`${styles.toggleButton} ${isOpen ? styles.toggleButtonOpen : styles.toggleButtonClosed}`}
         >
           Filters
         </button>
         {/* Inline Drawer (pushes content down) */}
         {shouldShowContent && (
           <div
-            className={`w-full flex justify-center transition-all duration-300 ${showContent ? 'opacity-100' : 'opacity-0 pointer-events-none'} overflow-hidden`}
+            className={`${styles.drawerContent} ${showContent ? styles.drawerContentOpen : styles.drawerContentClosed}`}
             style={{
               willChange: 'height, opacity',
               height: height,
@@ -88,8 +86,11 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onOpen, onClose, ch
               marginTop: isOpen ? '0' : undefined,
             }}
           >
-            <div ref={contentRef} className="bg-gray-900 text-white border-l border-r border-b border-gray-700 rounded-b-lg shadow-lg w-full max-w-screen-lg p-6 pb-8">
-              <div className="flex justify-between items-center"><span className="font-bold text-lg">Filters</span><button onClick={onClose} className="text-gray-400 hover:text-white text-2xl leading-none">&times;</button></div>
+            <div ref={contentRef} className={styles.drawerInner}>
+              <div className={styles.header}>
+                <span className={styles.title}>Filters</span>
+                <button onClick={onClose} className={styles.closeButton}>&times;</button>
+              </div>
               {drawerContent}
             </div>
           </div>

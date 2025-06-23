@@ -1,0 +1,30 @@
+.body {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-variation-settings: var(--font-geist-sans-variable);
+  font-feature-settings: var(--font-geist-mono-variable);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #111827;
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+  .body {
+    padding: 0.5rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .body {
+    padding: 1rem;
+  }
+} 

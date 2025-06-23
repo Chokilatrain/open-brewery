@@ -1,0 +1,8 @@
+.menuItem {
+  padding: 0.25rem 1rem;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background-color: #374151;
+} 

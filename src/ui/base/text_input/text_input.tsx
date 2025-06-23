@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Menu } from "@/ui/base/menu/menu";
 import { MenuItem } from "@/ui/base/menu/menu_item";
+import styles from './text_input.module.css';
 
 export interface SuggestionItem {
   id: string;
@@ -63,15 +64,18 @@ export const TextInput = ({
       onEnter();
     }
   };
-  console.log("suggestions NOE", suggestions);
-  const menuItems = suggestions.map((suggestion) => ({ label: suggestion.name, onClick: () => {  console.log("suggestion", suggestion); handleSuggestionClick(suggestion) } }));
+  
+  const menuItems = suggestions.map((suggestion) => ({ 
+    label: suggestion.name, 
+    onClick: () => { handleSuggestionClick(suggestion) } 
+  }));
 
   return (
-    <div ref={wrapperRef} style={{ position: "relative", width: "100%" }}>
+    <div ref={wrapperRef} className={styles.wrapper}>
       <input
         ref={inputRef}
         type="text"
-        className="bg-gray-900 text-white border-2 border-gray-700 rounded-t-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+        className={styles.input}
         placeholder={placeholder}
         value={value}
         onChange={(e) => handleInputChange(e.target.value)}
@@ -85,7 +89,7 @@ export const TextInput = ({
           renderItem={
             (item) => <MenuItem label={item.label} onClick={item.onClick} icon={item.icon} key={item.label} />
           }
-          className="bg-gray-800 text-white border border-gray-700"
+          className={styles.menu}
         />
       )}
     </div>

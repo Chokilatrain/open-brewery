@@ -1,0 +1,152 @@
+.tableWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sortPanelContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  border: 1px solid #374151;
+  background-color: #1f2937;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.tableHead {
+  background-color: #374151;
+}
+
+.tableHeader {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #f9fafb;
+  border-bottom: 1px solid #4b5563;
+  white-space: nowrap;
+}
+
+.tableRow {
+  border-bottom: 1px solid #374151;
+  transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+  background-color: #374151;
+}
+
+.tableRowAlt {
+  background-color: #2d3748;
+  border-bottom: 1px solid #374151;
+  transition: background-color 0.2s ease;
+}
+
+.tableRowAlt:hover {
+  background-color: #374151;
+}
+
+.tableCell {
+  padding: 0.75rem;
+  color: #d1d5db;
+  border-bottom: 1px solid #374151;
+  vertical-align: top;
+}
+
+.tableCell:last-child {
+  border-bottom: none;
+}
+
+.breweryNameLink {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.breweryNameLink:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.breweryNameLink:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-radius: 0.25rem;
+}
+
+.loadingSkeleton {
+  height: 1rem;
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 0.25rem;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Mobile responsive design */
+@media (max-width: 768px) {
+  .tableWrapper {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .tableContainer {
+    border-radius: 0.375rem;
+  }
+
+  .table {
+    font-size: 0.8rem;
+  }
+
+  .tableHeader {
+    padding: 0.5rem;
+  }
+
+  .tableCell {
+    padding: 0.5rem;
+  }
+
+  .loadingSkeleton {
+    height: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tableWrapper {
+    gap: 0.5rem;
+  }
+
+  .table {
+    font-size: 0.75rem;
+  }
+
+  .tableHeader {
+    padding: 0.375rem;
+  }
+
+  .tableCell {
+    padding: 0.375rem;
+  }
+
+  .loadingSkeleton {
+    height: 0.75rem;
+  }
+} 

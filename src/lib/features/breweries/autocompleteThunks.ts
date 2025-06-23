@@ -2,7 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchAutocompleteSuggestions } from '@/services/open_brewery_db';
 import { setSuggestions } from './breweryAutocompleteSlice';
 import { setSearch } from './brewerySearchSlice';
-import { setResults } from './searchResultsThunks';
 import type { RootState } from '@/lib/store';
 
 // Thunk to update the search term in Redux state
@@ -23,8 +22,7 @@ export const fetchAutocompleteSuggestionsThunk = createAsyncThunk(
       return state.breweryAutocomplete.suggestions[search];
     }
     const suggestions = await fetchAutocompleteSuggestions(search);
-    // Add autocomplete breweries to the entities map (page 0 for autocomplete)
-    dispatch(setResults({ search, page: 0, results: suggestions }));
+    // Only store suggestions, not in the main search results state
     dispatch(setSuggestions({ search, suggestions: suggestions.map(s => s.name) }));
     return suggestions;
   }

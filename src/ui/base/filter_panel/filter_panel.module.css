@@ -1,0 +1,102 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.input {
+  background-color: #111827;
+  color: white;
+  border: 2px solid #374151;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  width: 100%;
+  outline: none;
+  font-size: 0.875rem;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #3b82f6;
+  border-color: #3b82f6;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+}
+
+.button:hover {
+  background-color: #1d4ed8;
+}
+
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Mobile responsive design */
+@media (max-width: 768px) {
+  .container {
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .input {
+    padding: 0.75rem;
+    font-size: 1rem; /* Larger for mobile touch targets */
+  }
+
+  .button {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .input {
+    padding: 0.625rem;
+    font-size: 0.875rem;
+  }
+
+  .button {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Desktop layout */
+@media (min-width: 640px) {
+  .container {
+    flex-direction: row;
+    gap: 1rem;
+  }
+  
+  .input {
+    width: 12rem;
+  }
+
+  .button {
+    width: auto;
+  }
+} 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
+import styles from './layout.module.css';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,6 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Open Brewery Browser",
   description: "Open Brewery Browser",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
 export default function RootLayout({
@@ -26,9 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={
-          `${geistSans.variable} ${geistMono.variable} antialiased bg-gray-900 text-white min-h-screen flex flex-col items-center w-full`
-        }
+        className={`${geistSans.variable} ${geistMono.variable} ${styles.body}`}
       >
         <StoreProvider>
           {children}

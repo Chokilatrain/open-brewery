@@ -1,4 +1,5 @@
 import React from "react";
+import styles from './filter_panel.module.css';
 
 interface FilterPanelProps {
   name: string;
@@ -17,24 +18,24 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   onGo,
   className = "",
 }) => (
-  <div className={`flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full mb-4 ${className}`}>
+  <div className={`${styles.container} ${className}`}>
     <input
       type="text"
       placeholder="Filter by name"
       value={name}
       onChange={e => onNameChange(e.target.value)}
-      className="bg-gray-900 text-white border-2 border-gray-700 rounded-md p-2 w-full sm:w-48 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+      className={styles.input}
     />
     <input
       type="text"
       placeholder="Filter by city"
       value={city}
       onChange={e => onCityChange(e.target.value)}
-      className="bg-gray-900 text-white border-2 border-gray-700 rounded-md p-2 w-full sm:w-48 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+      className={styles.input}
     />
     <button
       onClick={onGo}
-      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+      className={styles.button}
     >
       Go
     </button>
