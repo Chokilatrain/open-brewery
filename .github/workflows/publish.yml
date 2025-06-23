@@ -1,5 +1,9 @@
 # File: .github/workflows/publish.yml
 name: publish-to-github-pages
+
+env:
+  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+
 on:
   push:
     branches:
@@ -46,7 +50,6 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
-          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
 
       - name: Check Next.js configuration 🔍
         run: |
@@ -60,15 +63,12 @@ jobs:
       - name: Build with Next.js 🏗️
         run: |
           echo "Building with Next.js static export..."
-          echo "Environment check before build:"
-          echo "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY length: ${#NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}"
           npm run build
           echo "Build completed. Checking for output directories..."
           ls -la
         env:
           NODE_ENV: production
           NEXT_TELEMETRY_DISABLED: 1
-          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
 
       - name: Debug - List build output 📋
         run: |
