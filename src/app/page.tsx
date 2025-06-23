@@ -15,6 +15,9 @@ import type { SuggestionItem } from "@/ui/base/text_input/text_input";
 const MIN_SEARCH_CHARACTERS = 3;
 
 export default function HomeContainer() {
+  console.log("NEXT_PUBLIC_GOOGLE_MAPS_API_KEY", process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+
+
   const dispatch = useAppDispatch();
   const router = useRouter();
   const search = useAppSelector(selectSearch);
